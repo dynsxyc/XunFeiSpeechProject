@@ -26,11 +26,13 @@ import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechRecognizer;
 import com.iflytek.cloud.ui.RecognizerDialog;
 import com.iflytek.cloud.ui.RecognizerDialogListener;
-import com.iflytek.cloud.util.ContactManager;
 import com.iflytek.cloud.util.ContactManager.ContactListener;
 import com.iflytek.speech.setting.IatSettings;
 import com.iflytek.speech.util.FucUtil;
 import com.iflytek.speech.util.JsonParser;
+import com.zhongjiang.youxuan.speechlib.ISpeechRecognizerCallback;
+import com.zhongjiang.youxuan.speechlib.MSpeechError;
+import com.zhongjiang.youxuan.speechlib.SpeechRecognizerOperation;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -112,7 +114,35 @@ public class IatDemo extends Activity implements OnClickListener {
 		findViewById(R.id.iat_stop).setOnClickListener(IatDemo.this);
 		findViewById(R.id.iat_cancel).setOnClickListener(IatDemo.this);
 		findViewById(R.id.image_iat_set).setOnClickListener(IatDemo.this);
+		mSpeechRecognizerOperation = new SpeechRecognizerOperation.Companion.Builder(this).callBack(new ISpeechRecognizerCallback() {
+			@Override
+			public void onResult(String resultStr) {
+
+			}
+
+			@Override
+			public void onStart() {
+
+			}
+
+			@Override
+			public void onFinish() {
+
+			}
+
+			@Override
+			public void onVolumeChanged(int volume) {
+
+			}
+
+			@Override
+			public void onError(MSpeechError error, String errorMsg) {
+
+			}
+		}).endOutTime(2000).hasPunctuation(true).timeOutTime(5000).build();
 	}
+
+	private SpeechRecognizerOperation mSpeechRecognizerOperation;
 
 	int mStartRet = 0; // 函数调用返回值
 
@@ -162,19 +192,22 @@ public class IatDemo extends Activity implements OnClickListener {
 		// 停止听写
 		case R.id.iat_stop:
 			mSpeechRecognizer.stopListening();
+			mSpeechRecognizerOperation.stopListening();
 			showTip("停止听写");
 			break;
 		// 取消听写
 		case R.id.iat_cancel:
 			mSpeechRecognizer.cancel();
+			mSpeechRecognizerOperation.cancelListening();
 			showTip("取消听写");
 			break;
 		// 上传联系人
 		case R.id.iat_upload_contacts:
-			showTip(getString(R.string.text_upload_contacts));
-			ContactManager mgr = ContactManager.createManager(IatDemo.this,
-					mContactListener);
-			mgr.asyncQueryAllContactsName();
+//			showTip(getString(R.string.text_upload_contacts));
+//			ContactManager mgr = ContactManager.createManager(IatDemo.this,
+//					mContactListener);
+//			mgr.asyncQueryAllContactsName();
+			mSpeechRecognizerOperation.startListening();
 			break;
 		// 上传用户词表
 		case R.id.iat_upload_userwords:
@@ -276,8 +309,8 @@ public class IatDemo extends Activity implements OnClickListener {
 
 		@Override
 		public void onVolumeChanged(int volume, byte[] data) {
-			showTip("当前正在说话，音量大小：" + volume);
-			Log.d(TAG, "返回音频数据："+data.length);
+//			showTip("当前正在说话，音量大小：" + volume);
+//			Log.d(TAG, "返回音频数据："+data.length);
 		}
 
 		@Override
@@ -309,7 +342,7 @@ public class IatDemo extends Activity implements OnClickListener {
 		for (String key : mIatResults.keySet()) {
 			resultBuffer.append(mIatResults.get(key));
 		}
-
+		Log.i(TAG,resultBuffer.toString());
 		mResultText.setText(resultBuffer.toString());
 		mResultText.setSelection(mResultText.length());
 	}
@@ -425,7 +458,7 @@ public class IatDemo extends Activity implements OnClickListener {
 		mSpeechRecognizer.setParameter(SpeechConstant.VAD_EOS, mSharedPreferences.getString("iat_vadeos_preference", "1000"));
 		
 		// 设置标点符号,设置为"0"返回结果无标点,设置为"1"返回结果有标点
-		mSpeechRecognizer.setParameter(SpeechConstant.ASR_PTT, mSharedPreferences.getString("iat_punc_preference", "1"));
+		mSpeechRecognizer.setParameter(SpeechConstant.ASR_PTT, "0");
 		
 		// 设置音频保存路径，保存音频格式支持pcm、wav，设置路径为sd卡请注意WRITE_EXTERNAL_STORAGE权限
 		mSpeechRecognizer.setParameter(SpeechConstant.AUDIO_FORMAT,"wav");
