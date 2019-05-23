@@ -24,7 +24,7 @@ class SpeechRecognizerListener constructor(val callback: ISpeechRecognizerCallba
     override  fun onInit(code: Int) {
         if (code != ErrorCode.SUCCESS) {
             callback?.let {
-                it.onError(MSpeechError.ERROR_INIT, "语音识别功能初始化失败")
+                it.onListeningError(MSpeechError.ERROR_INIT, "语音识别功能初始化失败")
             }
             Log.i("SpeechRecognizerOperation","初始化失败 = $code")
         }
@@ -34,7 +34,7 @@ class SpeechRecognizerListener constructor(val callback: ISpeechRecognizerCallba
     override fun onBeginOfSpeech() {
         // 此回调表示：sdk内部录音机已经准备好了，用户可以开始语音输入
         callback?.let {
-            it.onStart()
+            it.onListeningStart()
         }
         mResultBuffer.setLength(0)
         Log.i("SpeechRecognizerOperation","开始录音")
@@ -54,12 +54,12 @@ class SpeechRecognizerListener constructor(val callback: ISpeechRecognizerCallba
             callback?.let {
                 if (error.errorCode == 10118) {
 
-                    it.onError(MSpeechError.ERROR_NO_SPEECH, "您可能没有说话")
+                    it.onListeningError(MSpeechError.ERROR_NO_SPEECH, "您可能没有说话")
                 } else {
-                    it.onError(MSpeechError.ERROR_NO_SPEECH, error.getPlainDescription(true))
+                    it.onListeningError(MSpeechError.ERROR_NO_SPEECH, error.getPlainDescription(true))
                 }
             }
-            Log.i("SpeechRecognizerOperation","onError ${error.getPlainDescription(true)}")
+            Log.i("SpeechRecognizerOperation","onListeningError ${error.getPlainDescription(true)}")
         }
 
     }
@@ -70,7 +70,7 @@ class SpeechRecognizerListener constructor(val callback: ISpeechRecognizerCallba
 //        showTip("结束说话")
         Log.i("SpeechRecognizerOperation","结束说话")
         callback?.let {
-            it.onFinish()
+            it.onListeningFinish()
         }
     }
 
@@ -84,7 +84,7 @@ class SpeechRecognizerListener constructor(val callback: ISpeechRecognizerCallba
         if (results == null){
             Log.i("SpeechRecognizerOperation","results == null")
             callback?.let {
-                it.onResult("")
+                it.onListeningResult("")
             }
             return
         }
@@ -107,9 +107,9 @@ class SpeechRecognizerListener constructor(val callback: ISpeechRecognizerCallba
         }
         if (isLast) {
             callback?.let {
-                it.onResult(mResultBuffer.toString())
+                it.onListeningResult(mResultBuffer.toString())
             }
-            Log.i("SpeechRecognizerOperation","onResult ${mResultBuffer.toString()}")
+            Log.i("SpeechRecognizerOperation","onListeningResult ${mResultBuffer.toString()}")
         }
     }
 
@@ -118,7 +118,7 @@ class SpeechRecognizerListener constructor(val callback: ISpeechRecognizerCallba
 //        showTip("当前正在说话，音量大小：$volume")
 //        Log.d(TAG, "返回音频数据：" + data.size)
         callback?.let {
-            it.onVolumeChanged(volume)
+            it.onListeningVolumeChanged(volume)
         }
         Log.i("SpeechRecognizerOperation","语音大小 $volume")
     }

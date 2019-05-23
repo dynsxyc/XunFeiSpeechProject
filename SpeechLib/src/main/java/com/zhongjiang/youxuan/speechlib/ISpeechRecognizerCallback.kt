@@ -10,9 +10,24 @@ package com.zhongjiang.youxuan.speechlib
  * @email 583454199@qq.com
  **/
 interface ISpeechRecognizerCallback {
-    fun onResult(resultStr:String)
-    fun onStart()
-    fun onFinish()
-    fun onVolumeChanged(volume: Int)
-    fun onError(error: MSpeechError,errorMsg:String)
+    /**
+     * 语音识别返回结果
+     * */
+    fun onListeningResult(resultStr:String)
+    /**
+     * 语音识别 开始
+     * */
+    fun onListeningStart()
+    /**
+     * 语音识别 结束
+     * */
+    fun onListeningFinish()
+    /**
+     * 语音识别  音量监听
+     * */
+    fun onListeningVolumeChanged(volume: Int)
+    /**
+     * 语音识别 错误返回
+     * */
+    fun onListeningError(error: MSpeechError, errorMsg:String)
 }

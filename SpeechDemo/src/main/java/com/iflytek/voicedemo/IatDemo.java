@@ -116,27 +116,27 @@ public class IatDemo extends Activity implements OnClickListener {
 		findViewById(R.id.image_iat_set).setOnClickListener(IatDemo.this);
 		mSpeechRecognizerOperation = new SpeechRecognizerOperation.Companion.Builder(this).callBack(new ISpeechRecognizerCallback() {
 			@Override
-			public void onResult(String resultStr) {
+			public void onListeningResult(String resultStr) {
 
 			}
 
 			@Override
-			public void onStart() {
+			public void onListeningStart() {
 
 			}
 
 			@Override
-			public void onFinish() {
+			public void onListeningFinish() {
 
 			}
 
 			@Override
-			public void onVolumeChanged(int volume) {
+			public void onListeningVolumeChanged(int volume) {
 
 			}
 
 			@Override
-			public void onError(MSpeechError error, String errorMsg) {
+			public void onListeningError(MSpeechError error, String errorMsg) {
 
 			}
 		}).endOutTime(2000).hasPunctuation(true).timeOutTime(5000).build();
@@ -161,7 +161,7 @@ public class IatDemo extends Activity implements OnClickListener {
 			startActivity(intents);
 			break;
 		// 开始听写
-		// 如何判断一次听写结束：OnResult isLast=true 或者 onError
+		// 如何判断一次听写结束：OnResult isLast=true 或者 onListeningError
 		case R.id.iat_recognize:
 			mStringBuffer.setLength(0);
 			mResultText.setText(null);// 清空显示内容

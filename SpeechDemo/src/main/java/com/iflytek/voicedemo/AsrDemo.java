@@ -221,7 +221,7 @@ public class AsrDemo extends Activity implements OnClickListener{
 
 		@Override
 		public void onError(SpeechError error) {
-			showTip("onError Code："	+ error.getErrorCode());
+			showTip("onListeningError Code："	+ error.getErrorCode());
 		}
 
 		@Override

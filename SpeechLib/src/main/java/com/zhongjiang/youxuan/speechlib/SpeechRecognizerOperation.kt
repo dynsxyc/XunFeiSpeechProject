@@ -98,7 +98,7 @@ class SpeechRecognizerOperation private constructor(builder: Builder){
        var result =  mSpeechRecognizer.startListening(mSpeechRecognizerListener)
         if (result != ErrorCode.SUCCESS){
             mSpeechRecognizerListener.callback?.let {
-                it.onError(MSpeechError.ERROR_UNKNOWN,"startListening 失败")
+                it.onListeningError(MSpeechError.ERROR_UNKNOWN,"startListening 失败")
             }
         }
     }
