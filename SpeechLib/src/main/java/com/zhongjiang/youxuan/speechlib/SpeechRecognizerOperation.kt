@@ -1,11 +1,14 @@
 package com.zhongjiang.youxuan.speechlib
 
+import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.os.Environment
 import com.iflytek.cloud.ErrorCode
 import com.iflytek.cloud.SpeechConstant
 import com.iflytek.cloud.SpeechConstant.TYPE_CLOUD
 import com.iflytek.cloud.SpeechRecognizer
+import com.zhongjiang.youxuan.speechlib.permissions.RxPermissions
 import kotlin.collections.LinkedHashMap as LinkedHashMap1
 /**
  * @date on 2019/5/23 11:35
@@ -94,11 +97,22 @@ class SpeechRecognizerOperation private constructor(builder: Builder){
     fun stopListening(){
         mSpeechRecognizer.stopListening()
     }
-    fun startListening(){
-       var result =  mSpeechRecognizer.startListening(mSpeechRecognizerListener)
-        if (result != ErrorCode.SUCCESS){
-            mSpeechRecognizerListener.callback?.let {
-                it.onListeningError(MSpeechError.ERROR_UNKNOWN,"startListening 失败")
+    fun startListening(activity: Activity){
+        RxPermissions(activity).requestEach(Manifest.permission.RECORD_AUDIO).subscribe {
+            if (it.granted) {
+                //同意
+                var result =  mSpeechRecognizer.startListening(mSpeechRecognizerListener)
+                if (result != ErrorCode.SUCCESS){
+                    mSpeechRecognizerListener.callback?.let {
+                        it.onListeningError(MSpeechError.ERROR_UNKNOWN,"startListening 失败")
+                    }
+                }
+            } else {
+                //拒绝权限，不再问任何问题
+                //需要转到设置
+                mSpeechRecognizerListener.callback?.let {
+                    it.onLackRecordAudioPermissions()
+                }
             }
         }
     }

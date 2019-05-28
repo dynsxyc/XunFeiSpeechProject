@@ -30,4 +30,8 @@ interface ISpeechRecognizerCallback {
      * 语音识别 错误返回
      * */
     fun onListeningError(error: MSpeechError, errorMsg:String)
+    /**
+     * 没有录音权限
+     * */
+    fun onLackRecordAudioPermissions()
 }
